@@ -1,0 +1,22 @@
+
+
+import time
+import collections
+import thread
+import serial
+
+
+
+
+# compares the template keypoints to camera keypoints.
+# if there are at least 15 matches, we return the name of
+# the matched image.
+
+
+
+
+
+
+        # time.sleep(0.006)
+
+

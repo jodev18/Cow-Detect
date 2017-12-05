@@ -8,6 +8,9 @@ from datetime import datetime
 import threading
 from threading import Thread, Event, ThreadError
 from serial import SerialException
+from os import listdir
+from os.path import isfile, join
+
 
 class Cam():
 
@@ -18,6 +21,21 @@ class Cam():
     self.thread = Thread(target=self.run)
     self.frame_id = frame_name
     print "camera initialised"
+
+    self.imagemodels = []
+    self.modelpath = "cow_models"
+
+    print "Loading image models..."
+
+    self.filelist = [f for f in listdir(self.modelpath) if isfile(join(self.modelpath, f))]
+
+    #dynamically load image models based on file folder contents
+    if len(self.filelist) > 0:
+        print "--------------"
+        print "Loading " +  str(len(self.filelist)) + " image models..."
+        for file in self.filelist:
+            print "Added " + file + " to list of models."
+            self.imagemodels.append(cv2.imread(self.modelpath + file,0))
 
     # Load our image template, this is our reference image
     self.image_template = cv2.imread('imagemodels/rmodels/COW_A.jpg', 0)
@@ -62,9 +80,6 @@ class Cam():
   def sift_detector(self,frame,template):
 
     if frame is not None and template is not None:
-
-        #print(self.current_frame.shape)
-        #print(self.current_template.shape)
 
         image1 = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # change to grayscale
         #image2 = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)

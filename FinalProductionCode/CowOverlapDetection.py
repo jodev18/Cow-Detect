@@ -382,10 +382,24 @@ class Cam():
 if __name__ == "__main__":
 
   #smsbroker = SMSSender()
+  print "========COW OVERLAP DETECTION========"
+  while True:
+      try:
+          streamlink = raw_input("Enter new stream link: ")
+          windowtitle = raw_input("Stream Window Title: ")
+          # # 'samplevids/sample3.mp4''http://192.168.1.7:8080/video'
+          print "-----------------------------------"
+          print "Stream Link: " + streamlink
+          print "Window title set: " + windowtitle
+          print "Starting stream and processing..."
+          cam = Cam(streamlink, windowtitle)
+          cam.start()
+      except:
+          print "Error processing link. Please try again."
 
-  url = 'http://192.168.1.221:8080/video'#'samplevids/sample3.mp4''http://192.168.1.7:8080/video'
-  cam = Cam(url,'CAMERA 1')
-  cam.start()
+      print "-----------------------------------"
+
+
   #url2 = 'http://127.0.0.1:8888/mjpg/002'
   #cam2 = Cam(url2,'CAMERA 2')
   #cam2.start()

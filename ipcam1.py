@@ -26,12 +26,20 @@ class Cam():
     self.image_template4 = cv2.imread('imagemodels/rmodels/COW_D.jpg', 0)
     print "image template initialized."
 
+    # Our threshold to indicate object deteciton
+    # We use 10 since the SIFT detector returns little false positves
+    self.threshold = 10
+
+    print "Threshold value: " + self.threshold
+
     self.current_frame = None
     self.current_template = None
 
     # For the SMS and database stuff..
     #self.sms_handler = SMSSender()
     self.db_handler = DBManager()
+
+    print "Database initialized."
 
     self.cowA = "COW A"
     self.cowB = "COW B"
@@ -166,10 +174,6 @@ class Cam():
 
               cv2.putText(frame, str(matches), (450, 450), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 255, 0), 1)
 
-              # Our threshold to indicate object deteciton
-              # We use 10 since the SIFT detector returns little false positves
-              threshold = 10
-
               # If matches exceed our threshold then object has been detected
               # if not previous_detect is None:
 
@@ -185,7 +189,7 @@ class Cam():
                 self.sec_count = self.sec_count + 1
                 cv2.putText(frame,"Sec: " + str(self.sec_count),(200,450), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,0),1)
 
-              if matches > threshold:
+              if matches > self.threshold:
                 current_detect = self.cowA
                 end = time.time()
                 cv2.putText(frame, "Elapsed: " + str(end - start), (200, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1)
@@ -214,7 +218,7 @@ class Cam():
 
                     self.previous_detect = self.cowA
 
-              elif matches2 > threshold:
+              elif matches2 > self.threshold:
                  self.current_detect = self.cowB
                  end = time.time()
                  cv2.putText(frame, "Elapsed: " + str(end - start), (200, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1)
@@ -237,7 +241,7 @@ class Cam():
                           self.has_drawn_already = False
                           self.previous_detect = self.cowB
 
-              elif matches3 > threshold:
+              elif matches3 > self.threshold:
 
                   self.current_detect = self.cowC
                   end = time.time()
@@ -263,7 +267,7 @@ class Cam():
 
                      self.previous_detect = self.cowC
 
-              elif matches4 > threshold:
+              elif matches4 > self.threshold:
 
                 self.current_detect = self.cowD
                 end = time.time()
@@ -287,22 +291,22 @@ class Cam():
                     self.previous_detect = self.cowD
 
               else: # No stack yet
-                  if matches > threshold:
+                  if matches > self.threshold:
                       self.previous_detect = self.cowA
                       self.third_stack = self.cowA
                       cv2.rectangle(frame, pointsX[curr_frame_ind], pointsY[curr_frame_ind], (0, 255, 0), 3)
                       cv2.putText(frame, 'COW A FOUND', (50, 50), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 255, 0), 2)
-                  elif matches2 > threshold:
+                  elif matches2 > self.threshold:
                       self.previous_detect = self.cowB
                       self.third_stack = self.cowB
                       cv2.rectangle(frame, pointsX[curr_frame_ind], pointsY[curr_frame_ind], (0, 255, 0), 3)
                       cv2.putText(frame, 'COW B FOUND', (50, 50), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 255, 0), 2)
-                  elif matches3 > threshold:
+                  elif matches3 > self.threshold:
                       self.previous_detect = self.cowC
                       self.third_stack = self.cowC
                       cv2.rectangle(frame, pointsX[curr_frame_ind], pointsY[curr_frame_ind], (0, 255, 0), 3)
                       cv2.putText(frame, 'COW C FOUND', (50, 50), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 255, 0), 2)
-                  elif matches4 > threshold:
+                  elif matches4 > self.threshold:
                       self.previous_detect = self.cowD
                       self.third_stack = self.cowD
                       cv2.rectangle(frame,pointsX[curr_frame_ind], pointsY[curr_frame_ind], (0, 255, 0), 3)
@@ -346,9 +350,6 @@ class Cam():
 
   def check_pumatong(self,frame,pumatong, pinatungan, point1, point2):
 
-      #topleftx,toplefty = point1
-      #bottom_right_x,bottom_right_y = point2
-
     if pumatong != pinatungan:
       patong_info = []
       cv2.rectangle(frame, point1, point2, (0, 255, 0), 3)
@@ -366,6 +367,17 @@ class Cam():
       self.third_stack = cowname
       cv2.rectangle(framename, coordX,coordY, (0, 255, 0), 3)
       cv2.putText(framename, cowname + ' found.', (50, 50), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 255, 0), 2)
+
+  def detect_and_check_overlap(self,image,imagetemplate):
+
+      match_info = self.sift_detector(image,imagetemplate)
+
+      if match_info > self.threshold:
+          print "Huh"
+      else:
+          print "Ok"
+
+
 
 if __name__ == "__main__":
 

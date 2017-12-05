@@ -3,7 +3,7 @@
 start C:\xampped\xampp-control.exe
 PING localhost -n 10 >NUL
 echo Initializing Estrus Monitor...
-python ipcam1.py
+python CowOverlapDetection.py
 
 echo Press any key to restart the program.
 pause

@@ -48,7 +48,7 @@ class Cam():
     # We use 10 since the SIFT detector returns little false positves
     self.threshold = 10
 
-    print "Threshold value: " + self.threshold
+    print "Threshold value: " + str(self.threshold)
 
     self.current_frame = None
     self.current_template = None
@@ -415,8 +415,10 @@ if __name__ == "__main__":
                   print "Window title must not be empty."
           else:
               print "Stream link must not be empty."
-      except:
-          print "Error processing link. Please try again."
+      except Exception as ex:
+              template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+              message = template.format(type(ex).__name__, ex.args)
+              print message
 
       print "-----------------------------------"
 

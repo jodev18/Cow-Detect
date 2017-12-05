@@ -1,10 +1,9 @@
 import cv2
 import numpy as np
 import time
-from SmsManager import SMSSender
-from DatabaseManager import DBManager
+from FinalProductionCode.SmsManager import SMSSender
+from FinalProductionCode.DatabaseManager import DBManager
 from datetime import datetime
-import sys
 import urllib2
 
 #detection algorithm using sift

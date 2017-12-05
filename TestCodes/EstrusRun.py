@@ -1,7 +1,4 @@
 from ComputerVision import SeeCows
-from SmsManager import SMSSender
-import serial
-import time
 
 scows = SeeCows()
 #sender = SMSSender()

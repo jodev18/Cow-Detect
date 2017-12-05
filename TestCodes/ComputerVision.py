@@ -2,7 +2,7 @@ import cv2
 import collections
 from os import listdir
 from os.path import isfile, join
-from DatabaseManager import DBManager
+from FinalProductionCode.DatabaseManager import DBManager
 
 class SeeCows():
 

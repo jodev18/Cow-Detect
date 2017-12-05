@@ -389,11 +389,17 @@ if __name__ == "__main__":
           windowtitle = raw_input("Stream Window Title: ")
           # # 'samplevids/sample3.mp4''http://192.168.1.7:8080/video'
           print "-----------------------------------"
-          print "Stream Link: " + streamlink
-          print "Window title set: " + windowtitle
-          print "Starting stream and processing..."
-          cam = Cam(streamlink, windowtitle)
-          cam.start()
+          if len(streamlink) > 0:
+              if len(windowtitle) > 0:
+                  print "Stream Link: " + streamlink
+                  print "Window title set: " + windowtitle
+                  print "Starting stream and processing..."
+                  cam = Cam(streamlink, windowtitle)
+                  cam.start()
+              else:
+                  print "Window title must not be empty."
+          else:
+              print "Stream link must not be empty."
       except:
           print "Error processing link. Please try again."
 

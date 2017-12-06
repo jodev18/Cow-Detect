@@ -38,10 +38,10 @@ class Cam():
             self.imagemodels.append(cv2.imread(self.modelpath + file,0))
 
     # Load our image template, this is our reference image
-    self.image_template = cv2.imread('imagemodels/rmodels/COW_A.jpg', 0)
-    self.image_template2 = cv2.imread('imagemodels/rmodels/COW_B.jpg', 0)
-    self.image_template3 = cv2.imread('imagemodels/rmodels/COW_C.jpg', 0)
-    self.image_template4 = cv2.imread('imagemodels/rmodels/COW_D.jpg', 0)
+    self.image_template = cv2.imread('../imagemodels/rmodels/COW_A.jpg', 0)
+    self.image_template2 = cv2.imread('../imagemodels/rmodels/COW_B.jpg', 0)
+    self.image_template3 = cv2.imread('../imagemodels/rmodels/COW_C.jpg', 0)
+    self.image_template4 = cv2.imread('../imagemodels/rmodels/COW_D.jpg', 0)
     print "image template initialized."
 
     # Our threshold to indicate object deteciton
@@ -182,10 +182,10 @@ class Cam():
               matches3 = self.sift_detector(cropped, self.image_template3)
               matches4 = self.sift_detector(cropped, self.image_template4)
 
-              #print ("First M Match:" + str(matches))
-              #print ("Second M Match:" + str(matches2))
-              #print ("Third M Match:" + str(matches3))
-              #print ("Fourth M Match:" + str(matches4))
+              print ("First M Match:" + str(matches))
+              print ("Second M Match:" + str(matches2))
+              print ("Third M Match:" + str(matches3))
+              print ("Fourth M Match:" + str(matches4))
 
               cv2.putText(frame, str(matches), (450, 450), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 255, 0), 1)
 
@@ -297,8 +297,8 @@ class Cam():
                 else:
                   if not self.has_drawn_already:
                     self.has_drawn_already = True
-                    if self.check_pumatong(self.current_detect, self.previous_detect) is not None:
-                       patong = self.check_pumatong(self.current_detect, self.previous_detect)
+                    if self.check_pumatong(frame,self.current_detect, self.previous_detect,pointsX[curr_frame_ind],pointsY[curr_frame_ind]) is not None:
+                       patong = self.check_pumatong(frame,self.current_detect, self.previous_detect,pointsX[curr_frame_ind],pointsY[curr_frame_ind])
                        db_info.append(patong[0])
                        db_info.append(patong[1])
                   else:
@@ -344,13 +344,19 @@ class Cam():
 
               cv2.imshow(self.frame_id, frame)
               cv2.imwrite('temp_run_img.jpg', frame) # continuously overwrites the file
+              cv2.imshow(self.frame_id + " Current Frame",cropped)
 
               if cv2.waitKey(1) ==27:
                exit(0)
+          else:
+              print "Video frame is none!"
+        else:
+            print "Some gaps in the video stream..."
 
       except ThreadError:
         print('Thread error for ' + self.frame_id)
         self.thread_cancelled = True
+        cv2.destroyWindow(self.frame_id)
 
   def is_running(self):
     return self.thread.isAlive()

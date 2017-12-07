@@ -27,6 +27,7 @@ class Cam():
 
     print "Loading image models..."
 
+    self.matchlist = []
     self.filelist = [f for f in listdir(self.modelpath) if isfile(join(self.modelpath, f))]
 
     #dynamically load image models based on file folder contents

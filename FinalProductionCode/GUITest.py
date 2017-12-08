@@ -20,7 +20,7 @@ window_f = Entry(window)
 window_f.grid(row=2,column=1)
 
 #Button initialization
-bOk = Button(window,text="Start Monitor")
+bOk = Button(window,text="Start Monitoring")
 bOk.grid(row=3,column=0,columnspan=2)
 
 window.mainloop()

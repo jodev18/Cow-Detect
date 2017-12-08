@@ -36,7 +36,7 @@ class Cam():
         print "Loading " +  str(len(self.filelist)) + " image models..."
         for file in self.filelist:
             print "Added " + file + " to list of models."
-            self.imagemodels.append(cv2.imread(self.modelpath + file,0))
+            self.imagemodels.append((file,cv2.imread(self.modelpath + file,0)))
 
     # Load our image template, this is our reference image
     self.image_template = cv2.imread('../imagemodels/rmodels/COW_A.jpg', 0)
@@ -194,7 +194,8 @@ class Cam():
                   if match_res > 0:
                       self.matchlist.append(match_res)
 
-              for mdata in self.matchlist:
+              for (fname,mdata) in self.matchlist:
+                  print fname + ":"
                   print mdata
               # Get number of SIFT matches
               #matches = self.sift_detector(cropped,self.image_template)

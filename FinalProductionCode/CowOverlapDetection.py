@@ -49,6 +49,8 @@ class Cam():
     # We use 10 since the SIFT detector returns little false positves
     self.threshold = 10
 
+    self.classifier = cv2.CascadeClassifier('cascades/haarcascade_fullbody.xml');
+
     print "Threshold value: " + str(self.threshold)
 
     self.current_frame = None
@@ -177,6 +179,15 @@ class Cam():
 
               #frame = cv2.flip(frame, 1)
 
+              #draw cascade over detected areas
+              grayframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+              # Pass frame to our car classifier
+              cars = self.classifier.detectMultiScale(grayframe, 1.4, 2)
+
+              for (x, y, w, h) in cars:
+                  cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 255), 2)
+
               for model in self.imagemodels:
                   match_res = self.sift_detector(cropped,model)
 
@@ -186,17 +197,17 @@ class Cam():
               for mdata in self.matchlist:
                   print mdata
               # Get number of SIFT matches
-              matches = self.sift_detector(cropped,self.image_template)
-              matches2 = self.sift_detector(cropped, self.image_template2)
-              matches3 = self.sift_detector(cropped, self.image_template3)
-              matches4 = self.sift_detector(cropped, self.image_template4)
+              #matches = self.sift_detector(cropped,self.image_template)
+              #matches2 = self.sift_detector(cropped, self.image_template2)
+              #matches3 = self.sift_detector(cropped, self.image_template3)
+              #matches4 = self.sift_detector(cropped, self.image_template4)
 
-              print ("First M Match:" + str(matches))
-              print ("Second M Match:" + str(matches2))
-              print ("Third M Match:" + str(matches3))
-              print ("Fourth M Match:" + str(matches4))
+              #print ("First M Match:" + str(matches))
+              #print ("Second M Match:" + str(matches2))
+              #print ("Third M Match:" + str(matches3))
+              #print ("Fourth M Match:" + str(matches4))
 
-              cv2.putText(frame, str(matches), (450, 450), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 255, 0), 1)
+              #cv2.putText(frame, str(matches), (450, 450), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 255, 0), 1)
 
               # If matches exceed our threshold then object has been detected
               # if not previous_detect is None:

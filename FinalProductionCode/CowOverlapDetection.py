@@ -175,8 +175,16 @@ class Cam():
 
               cropped = crops[curr_frame_ind]
 
-              frame = cv2.flip(frame, 1)
+              #frame = cv2.flip(frame, 1)
 
+              for model in self.imagemodels:
+                  match_res = self.sift_detector(cropped,model)
+
+                  if match_res > 0:
+                      self.matchlist.append(match_res)
+
+              for mdata in self.matchlist:
+                  print mdata
               # Get number of SIFT matches
               matches = self.sift_detector(cropped,self.image_template)
               matches2 = self.sift_detector(cropped, self.image_template2)
@@ -334,7 +342,7 @@ class Cam():
 
                  try:
                      sms_handler = SMSSender()
-                     sms_handler.sendSMS('9486598145', "Cow heat was detected: " + db_info[3] + "=>" + db_info[4])
+                    #sms_handler.sendSMS('9486598145', "Cow heat was detected: " + db_info[3] + "=>" + db_info[4])
                  except SerialException:
                      print("Serial port was occupied")
                  finally:

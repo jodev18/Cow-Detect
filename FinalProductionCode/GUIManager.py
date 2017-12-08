@@ -63,7 +63,8 @@ class MainForm:
             print "Fields aren't complete"
 
             self.notify_incomplete_field = Label(self.window,
-                                                 text="Fields are incomplete! Please enter appropriate input for the fields set.")
+                                                 text="Fields are incomplete! Please enter appropriate "
+                                                      "input for the fields set.")
             self.notify_incomplete_field.grid(row=4, column=0, columnspan=2)
 
 if __name__ == '__main__':

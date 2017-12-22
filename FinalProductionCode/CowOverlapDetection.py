@@ -12,6 +12,7 @@ from os import listdir
 from os.path import isfile, join
 
 
+
 class Cam():
 
   def __init__(self, url,frame_name):
@@ -75,6 +76,7 @@ class Cam():
 
     self.may_pumatong = False
     self.has_drawn_already = False
+
 
   def start(self):
     self.thread.start()
@@ -188,11 +190,11 @@ class Cam():
               for (x, y, w, h) in cars:
                   cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 255), 2)
 
-              for model in self.imagemodels:
+              for (filenamae,model) in self.imagemodels:
                   match_res = self.sift_detector(cropped,model)
 
                   if match_res > 0:
-                      self.matchlist.append(match_res)
+                      self.matchlist.append((filenamae,match_res))
 
               for (fname,mdata) in self.matchlist:
                   print fname + ":"
@@ -225,128 +227,7 @@ class Cam():
                 self.sec_count = self.sec_count + 1
                 cv2.putText(frame,"Sec: " + str(self.sec_count),(200,450), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,0),1)
 
-              if matches > self.threshold:
-                current_detect = self.cowA
-                end = time.time()
-                cv2.putText(frame, "Elapsed: " + str(end - start), (200, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1)
 
-                if (self.third_stack == current_detect):
-
-                   # release ng patong
-                   self.sec_count = 0
-                   cv2.putText(frame, "RELEASED", (200, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1)
-                   may_pumatong = False
-                   self.third_stack = ""
-
-                else:
-                    if not self.has_drawn_already:
-
-                       self.has_drawn_already = True
-
-                       if self.check_pumatong(frame,self.current_detect, self.previous_detect,pointsX[curr_frame_ind],pointsY[curr_frame_ind]) is not None:
-
-                          patong = self.check_pumatong(frame,self.current_detect, self.previous_detect,pointsX[curr_frame_ind],pointsY[curr_frame_ind])
-                          db_info.append(patong[0])
-                          db_info.append(patong[1])
-
-                       else:
-                           self.has_drawn_already = False
-
-                    self.previous_detect = self.cowA
-
-              elif matches2 > self.threshold:
-                 self.current_detect = self.cowB
-                 end = time.time()
-                 cv2.putText(frame, "Elapsed: " + str(end - start), (200, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1)
-
-                 if (self.third_stack == self.current_detect):
-                    # release ng patong
-                    may_pumatong = False
-                    self.sec_count = 0
-                    cv2.putText(frame, "RELEASED", (200, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1)
-
-                    self.third_stack = ""
-                 else:
-                    if not self.has_drawn_already:
-                        self.has_drawn_already = True
-                        if self.check_pumatong(frame,self.current_detect, self.previous_detect,pointsX[curr_frame_ind],pointsY[curr_frame_ind]) is not None:
-                          patong = self.check_pumatong(frame,self.current_detect, self.previous_detect,pointsX[curr_frame_ind],pointsY[curr_frame_ind])
-                          db_info.append(patong[0])
-                          db_info.append(patong[1])
-                        else:
-                          self.has_drawn_already = False
-                          self.previous_detect = self.cowB
-
-              elif matches3 > self.threshold:
-
-                  self.current_detect = self.cowC
-                  end = time.time()
-                  cv2.putText(frame, "Elapsed: " + str(end - start), (200, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1)
-
-                  if (self.third_stack == self.current_detect):
-                     may_pumatong = False
-                      # release ng patong
-                     self.sec_count = 0
-                     cv2.putText(frame, "RELEASED", (200, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1)
-
-                     self.third_stack = ""
-
-                  else:
-                     if not self.has_drawn_already:
-                         self.has_drawn_already = True
-                         if self.check_pumatong(frame,self.current_detect, self.previous_detect,pointsX[curr_frame_ind],pointsY[curr_frame_ind]) is not None:
-                            patong = self.check_pumatong(frame,self.current_detect, self.previous_detect,pointsX[curr_frame_ind],pointsY[curr_frame_ind])
-                            db_info.append(patong[0])
-                            db_info.append(patong[1])
-                         else:
-                            self.has_drawn_already = False
-
-                     self.previous_detect = self.cowC
-
-              elif matches4 > self.threshold:
-
-                self.current_detect = self.cowD
-                end = time.time()
-                cv2.putText(frame, "Elapsed: " + str(end - start), (200, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1)
-
-                if (self.third_stack == self.current_detect):
-                   may_pumatong = False
-              # release ng patong
-                   self.sec_count = 0
-                   cv2.putText(frame, "RELEASED", (200, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1)
-                   self.third_stack = ""
-                else:
-                  if not self.has_drawn_already:
-                    self.has_drawn_already = True
-                    if self.check_pumatong(frame,self.current_detect, self.previous_detect,pointsX[curr_frame_ind],pointsY[curr_frame_ind]) is not None:
-                       patong = self.check_pumatong(frame,self.current_detect, self.previous_detect,pointsX[curr_frame_ind],pointsY[curr_frame_ind])
-                       db_info.append(patong[0])
-                       db_info.append(patong[1])
-                  else:
-                    self.has_drawn_already = False
-                    self.previous_detect = self.cowD
-
-              else: # No stack yet
-                  if matches > self.threshold:
-                      self.previous_detect = self.cowA
-                      self.third_stack = self.cowA
-                      cv2.rectangle(frame, pointsX[curr_frame_ind], pointsY[curr_frame_ind], (0, 255, 0), 3)
-                      cv2.putText(frame, 'COW A FOUND', (50, 50), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 255, 0), 2)
-                  elif matches2 > self.threshold:
-                      self.previous_detect = self.cowB
-                      self.third_stack = self.cowB
-                      cv2.rectangle(frame, pointsX[curr_frame_ind], pointsY[curr_frame_ind], (0, 255, 0), 3)
-                      cv2.putText(frame, 'COW B FOUND', (50, 50), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 255, 0), 2)
-                  elif matches3 > self.threshold:
-                      self.previous_detect = self.cowC
-                      self.third_stack = self.cowC
-                      cv2.rectangle(frame, pointsX[curr_frame_ind], pointsY[curr_frame_ind], (0, 255, 0), 3)
-                      cv2.putText(frame, 'COW C FOUND', (50, 50), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 255, 0), 2)
-                  elif matches4 > self.threshold:
-                      self.previous_detect = self.cowD
-                      self.third_stack = self.cowD
-                      cv2.rectangle(frame,pointsX[curr_frame_ind], pointsY[curr_frame_ind], (0, 255, 0), 3)
-                      cv2.putText(frame, 'COW D FOUND', (50, 50), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 255, 0), 2)
 
               if len(db_info) == 5:
                  print('saving to database')
@@ -420,15 +301,10 @@ class Cam():
           print "Ok"
 
 
-
-if __name__ == "__main__":
-
-  #smsbroker = SMSSender()
-  print "========COW OVERLAP DETECTION========"
-  while True:
+  def start_scan(self,streamlink,windowtitle):
+      # smsbroker = SMSSender()
+      print "========COW OVERLAP DETECTION========"
       try:
-          streamlink = raw_input("Enter new stream link: ")
-          windowtitle = raw_input("Stream Window Title: ")
           # # 'samplevids/sample3.mp4''http://192.168.1.7:8080/video'
           print "-----------------------------------"
           if len(streamlink) > 0:
@@ -443,12 +319,11 @@ if __name__ == "__main__":
           else:
               print "Stream link must not be empty."
       except Exception as ex:
-              template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-              message = template.format(type(ex).__name__, ex.args)
-              print message
+          template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+          message = template.format(type(ex).__name__, ex.args)
+          print message
 
       print "-----------------------------------"
-
 
   #url2 = 'http://127.0.0.1:8888/mjpg/002'
   #cam2 = Cam(url2,'CAMERA 2')

@@ -1,7 +1,7 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtWidgets
 import sys
-import DetectionUIForm
-import LoginUIForm
+from FinalProductionCode.cow_ui import DetectionUIForm, LoginUIForm
+
 
 class ExampleApp(QtWidgets.QMainWindow, DetectionUIForm.Ui_DetectionWindow):
 

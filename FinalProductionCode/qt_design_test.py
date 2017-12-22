@@ -1,9 +1,9 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
-import windetect
-import logindetect
+import DetectionUIForm
+import LoginUIForm
 
-class ExampleApp(QtWidgets.QMainWindow, windetect.Ui_DetectionWindow):
+class ExampleApp(QtWidgets.QMainWindow, DetectionUIForm.Ui_DetectionWindow):
 
     def __init__(self, parent=None):
         super(ExampleApp, self).__init__(parent)
@@ -13,7 +13,7 @@ class ExampleApp(QtWidgets.QMainWindow, windetect.Ui_DetectionWindow):
     def exit_py(self):
         print "Exit"
 
-class LoginForm(QtWidgets.QWidget,logindetect.Ui_Form):
+class LoginForm(QtWidgets.QWidget, LoginUIForm.Ui_Form):
 
     def __init__(self, parent=None):
         super(LoginForm, self).__init__(parent)
@@ -23,9 +23,13 @@ class LoginForm(QtWidgets.QWidget,logindetect.Ui_Form):
 def main():
     app = QtWidgets.QApplication(sys.argv)
     form = ExampleApp()
-    loginform = LoginForm()
+    #loginform = LoginForm()
     form.show()
-    loginform.show()
+
+    #formcurrinst = form.get_instance()
+    #form.btnExit.setText("hello")
+
+    #loginform.show()
     app.exec_()
 
 if __name__ == '__main__':

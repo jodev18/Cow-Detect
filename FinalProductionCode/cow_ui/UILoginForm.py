@@ -23,6 +23,7 @@ class Ui_Form(object):
         self.lineEdit.setObjectName("lineEdit")
         self.lineEdit_2 = QtWidgets.QLineEdit(Form)
         self.lineEdit_2.setGeometry(QtCore.QRect(100, 70, 113, 20))
+        self.lineEdit_2.setEchoMode(self.lineEdit_2.Password)
         self.lineEdit_2.setObjectName("lineEdit_2")
         self.btnLogin = QtWidgets.QPushButton(Form)
         self.btnLogin.setGeometry(QtCore.QRect(60, 100, 75, 23))

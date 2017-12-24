@@ -55,4 +55,4 @@ class Ui_Dialog(object):
 
 if __name__ == '__main__':
     dg = Ui_Dialog()
-    dg.setupUi(QDialog())
+    #dg.setupUi(QDialog())

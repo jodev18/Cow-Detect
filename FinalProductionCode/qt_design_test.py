@@ -1,9 +1,9 @@
 from PyQt5 import QtWidgets
 import sys
-from FinalProductionCode.cow_ui import DetectionUIForm, LoginUIForm
+from FinalProductionCode.cow_ui import UIDetectionForm, UILoginForm
 
 
-class ExampleApp(QtWidgets.QMainWindow, DetectionUIForm.Ui_DetectionWindow):
+class ExampleApp(QtWidgets.QMainWindow, UIDetectionForm.Ui_DetectionWindow):
 
     def __init__(self, parent=None):
         super(ExampleApp, self).__init__(parent)

@@ -1,9 +1,9 @@
 from PyQt5 import QtWidgets
 import sys
-from FinalProductionCode.cow_ui import DetectionUIForm, LoginUIForm
+from FinalProductionCode.cow_ui import UIDetectionForm, UILoginForm
 
 
-class ExampleApp(QtWidgets.QMainWindow, DetectionUIForm.Ui_DetectionWindow):
+class ExampleApp(QtWidgets.QMainWindow, UIDetectionForm.Ui_DetectionWindow):
 
     def __init__(self, parent=None):
         super(ExampleApp, self).__init__(parent)
@@ -13,7 +13,7 @@ class ExampleApp(QtWidgets.QMainWindow, DetectionUIForm.Ui_DetectionWindow):
     def exit_py(self):
         print "Exit"
 
-class LoginForm(QtWidgets.QWidget, LoginUIForm.Ui_Form):
+class LoginForm(QtWidgets.QWidget, UILoginForm.Ui_Form):
 
     def __init__(self, parent=None):
         super(LoginForm, self).__init__(parent)

@@ -1,8 +1,7 @@
 
 from PyQt5 import QtWidgets,QtCore,QtGui
 from FinalProductionCode.cow_ui import UILoginForm
-import mysql.connector
-
+from FinalProductionCode.database.db_manager import MySQLHelper
 ### THIS WILL CONTAIN THE CODE FOR HANDLING LOGIN ACTION.
 
 class LoginForm(QtWidgets.QWidget, UILoginForm.Ui_Form):
@@ -20,11 +19,13 @@ class LoginForm(QtWidgets.QWidget, UILoginForm.Ui_Form):
         self.username = self.lineEdit.text()
         self.password = self.lineEdit_2.text()
 
-        if self.username is not None:
+        if len(self.username) > 0:
 
-            if self.password is not None:
+            if len(self.password) > 0:
+                #.showdialog("Ok","OK")
 
-                print "Ok"
+                sqlhelper = MySQLHelper()
+                sqlhelper.login(self.username,self.password)
 
             else:
                 self.showdialog("Password","Please enter your password.")
@@ -36,14 +37,14 @@ class LoginForm(QtWidgets.QWidget, UILoginForm.Ui_Form):
         print("Entered username: " + self.username)
         print("Entered password: " + self.password)
 
-        print "Login"
+        #print "Login"
 
     def showdialog(self,title,message):
         msg = QtWidgets.QMessageBox()
         msg.about(self, title, message)
 
-        retval = msg.exec_()
-        print "value of pressed message box button:", retval
+        #retval = msg.exec_()
+        #print "value of pressed message box button:", retval
 
     def exit_login(self):
         exit(0)

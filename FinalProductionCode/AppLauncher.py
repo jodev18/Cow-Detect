@@ -2,11 +2,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 from LoginActionPy import LoginForm
 
+from StreamActionPy import StreamForm
+
 
 def main_func():
 
     app = QtWidgets.QApplication(sys.argv)
-
     #LOGIN FORM INITIALIZATION
     login_form = LoginForm()
     login_form.init_buttons()

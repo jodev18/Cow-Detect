@@ -2,6 +2,8 @@
 from PyQt5 import QtWidgets,QtCore,QtGui
 from FinalProductionCode.cow_ui import UILoginForm
 from FinalProductionCode.database.db_manager import MySQLHelper
+
+from StreamActionPy import StreamForm
 ### THIS WILL CONTAIN THE CODE FOR HANDLING LOGIN ACTION.
 
 class LoginForm(QtWidgets.QWidget, UILoginForm.Ui_Form):
@@ -25,7 +27,21 @@ class LoginForm(QtWidgets.QWidget, UILoginForm.Ui_Form):
                 #.showdialog("Ok","OK")
 
                 sqlhelper = MySQLHelper()
-                sqlhelper.login(self.username,self.password)
+                loginresult = sqlhelper.login(self.username,self.password)
+
+                if loginresult == 1:
+                    self.showdialog('Success','Login successful.')
+                    self.hide()
+
+                    try:
+                        self.streamform = StreamForm()
+                        self.streamform.show()
+                    except Exception as ex:
+                        print ex
+
+                    #self.hide()
+                else:
+                    self.showdialog('Error','Login failed.')
 
             else:
                 self.showdialog("Password","Please enter your password.")

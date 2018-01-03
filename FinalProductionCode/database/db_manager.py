@@ -18,9 +18,20 @@ class MySQLHelper:
 
     def login(self,username,password):
         self.cursor = self.cnx.cursor()
-        query = ("SELECT count(username) from tbl_login_users WHERE username=%s AND password=%s",(username,password))
+        query = ("SELECT count(username) from tbl_login_users WHERE username=%s AND password=%s")
 
-        self.cursor.execute(query)
+        try:
+            self.cursor.execute(query,(username,password))
+
+            for r1 in self.cursor:
+                result = r1
+
+            if result is not None:
+                return 1
+            else:
+                return 0
+        except Exception as ex:
+            print ex
 
         #print self.cursor
         #for cc in self.cursor:

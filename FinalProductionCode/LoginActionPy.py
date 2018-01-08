@@ -35,6 +35,7 @@ class LoginForm(QtWidgets.QWidget, UILoginForm.Ui_Form):
 
                     try:
                         self.streamform = StreamForm()
+                        self.streamform.init_buttons()
                         self.streamform.show()
                     except Exception as ex:
                         print ex

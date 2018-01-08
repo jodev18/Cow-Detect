@@ -37,7 +37,8 @@ class Cam():
         print "Loading " +  str(len(self.filelist)) + " image models..."
         for file in self.filelist:
             print "Added " + file + " to list of models."
-            self.imagemodels.append((file,cv2.imread(self.modelpath + file,0)))
+            print "Path: " + self.modelpath + file
+            self.imagemodels.append((file,cv2.imread(self.modelpath +"/"+ file,0)))
 
     # Load our image template, this is our reference image
     self.image_template = cv2.imread('../imagemodels/rmodels/COW_A.jpg', 0)
@@ -119,7 +120,10 @@ class Cam():
 
         return len(good_matches)
     else:
-        print "Frame none"
+        if frame is None:
+            print "Frame none"
+        elif template is None:
+            print "Template none"
         return 0
 
   def run(self):
@@ -130,10 +134,12 @@ class Cam():
     curr_time = datetime.now().time()
     start = time.time()
 
+    current_sector = ""
+
     while not self.thread_cancelled:
       try:
         sec_trigger = frame_count % 30
-        bytes+=self.stream.raw.read(1024)
+        bytes+=self.stream.raw.read(2048)
         a = bytes.find('\xff\xd8')
         b = bytes.find('\xff\xd9')
         if a!=-1 and b!=-1:
@@ -143,7 +149,12 @@ class Cam():
 
           jpg = bytes[a:b+2]
           bytes= bytes[b+2:]
-          frame = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8),cv2.IMREAD_COLOR)
+
+          try:
+              frame = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
+          except Exception as ex:
+              frame = None
+              print ex
 
           if frame is not None:
               height, width = frame.shape[:2]
@@ -164,9 +175,9 @@ class Cam():
 
               # Draw rectangular window for our region of interest
               cv2.rectangle(frame, pointsX[curr_frame_ind], pointsY[curr_frame_ind], 255, 3)
-
-              ### WE CROP THE FRAME INTO 6 PARTS, TO IMPROVE EFFICIENCY OF DETECTION ##
-
+              #
+              # ### WE CROP THE FRAME INTO 6 PARTS, TO IMPROVE EFFICIENCY OF DETECTION ##
+              #
               cropped1 = frame[top_left_x:bottom_right_y, top_left_y:bottom_right_x]
               cropped2 = frame[top_left_x:bottom_right_y, bottom_right_x:bottom_right_x * 2]
               cropped3 = frame[top_left_x:bottom_right_y, bottom_right_x * 2:bottom_right_x * 3]
@@ -182,78 +193,69 @@ class Cam():
               #frame = cv2.flip(frame, 1)
 
               #draw cascade over detected areas
-              grayframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+              # grayframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
               # Pass frame to our car classifier
-              cars = self.classifier.detectMultiScale(grayframe, 1.4, 2)
+              # cars = self.classifier.detectMultiScale(grayframe, 1.4, 2)
 
-              for (x, y, w, h) in cars:
-                  cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 255), 2)
+              # for (x, y, w, h) in cars:
+              #     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 255), 2)
 
               for (filenamae,model) in self.imagemodels:
-                  match_res = self.sift_detector(cropped,model)
+                   match_res = self.sift_detector(cropped,model)
 
-                  if match_res > 0:
-                      self.matchlist.append((filenamae,match_res))
+                   print "Match Result for " + filenamae
+                   print match_res
+
+                   if match_res > 0:
+                       self.matchlist.append((filenamae,match_res))
 
               for (fname,mdata) in self.matchlist:
                   print fname + ":"
                   print mdata
-              # Get number of SIFT matches
-              #matches = self.sift_detector(cropped,self.image_template)
-              #matches2 = self.sift_detector(cropped, self.image_template2)
-              #matches3 = self.sift_detector(cropped, self.image_template3)
-              #matches4 = self.sift_detector(cropped, self.image_template4)
-
-              #print ("First M Match:" + str(matches))
-              #print ("Second M Match:" + str(matches2))
-              #print ("Third M Match:" + str(matches3))
-              #print ("Fourth M Match:" + str(matches4))
-
-              #cv2.putText(frame, str(matches), (450, 450), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 255, 0), 1)
 
               # If matches exceed our threshold then object has been detected
               # if not previous_detect is None:
-
-              may_pumatong = True
-
-              db_info = []
-              db_info.append(str(curr_time))
-              db_info.append(str(curr_date))
-              db_info.append(str('5:00'))
-
-
-              if(sec_trigger == 0):
-                self.sec_count = self.sec_count + 1
-                cv2.putText(frame,"Sec: " + str(self.sec_count),(200,450), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,0),1)
-
-
-
-              if len(db_info) == 5:
-                 print('saving to database')
-                 self.db_handler.insert_cow_overlap(db_info)
-
-                 try:
-                     sms_handler = SMSSender()
-                    #sms_handler.sendSMS('9486598145', "Cow heat was detected: " + db_info[3] + "=>" + db_info[4])
-                 except SerialException:
-                     print("Serial port was occupied")
-                 finally:
-                     db_info = []
+              #
+              # may_pumatong = True
+              #
+              # db_info = []
+              # db_info.append(str(curr_time))
+              # db_info.append(str(curr_date))
+              # db_info.append(str('5:00'))
+              #
+              #
+              # if(sec_trigger == 0):
+              #   self.sec_count = self.sec_count + 1
+              #   cv2.putText(frame,"Sec: " + str(self.sec_count),(200,450), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,0),1)
+              #
+              #
+              #
+              # if len(db_info) == 5:
+              #    print('saving to database')
+              #    self.db_handler.insert_cow_overlap(db_info)
+              #
+              #    try:
+              #        sms_handler = SMSSender()
+              #       #sms_handler.sendSMS('9486598145', "Cow heat was detected: " + db_info[3] + "=>" + db_info[4])
+              #    except SerialException:
+              #        print("Serial port was occupied")
+              #    finally:
+              #        db_info = []
 
               else:
                   print(self.frame_id + ': No stacking yet')
 
               cv2.imshow(self.frame_id, frame)
-              cv2.imwrite('temp_run_img.jpg', frame) # continuously overwrites the file
+              #cv2.imwrite('temp_run_img.jpg', frame) # continuously overwrites the file
               cv2.imshow(self.frame_id + " Current Frame",cropped)
 
               if cv2.waitKey(1) ==27:
                exit(0)
           else:
-              print "Video frame is none!"
+              print "---"
         else:
-            print "Some gaps in the video stream..."
+            print "---"
 
       except ThreadError:
         print('Thread error for ' + self.frame_id)

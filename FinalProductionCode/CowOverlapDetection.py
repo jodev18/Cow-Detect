@@ -6,6 +6,7 @@ from SmsManager import SMSSender
 from DatabaseManager import DBManager
 from datetime import datetime
 import threading
+import thread
 from threading import Thread, Event, ThreadError
 from serial import SerialException
 from os import listdir
@@ -21,6 +22,8 @@ class Cam():
     self.thread_cancelled = False
     self.thread = Thread(target=self.run)
     self.frame_id = frame_name
+    self.stream_name = url
+
     print "camera initialised"
 
     self.imagemodels = []
@@ -78,6 +81,7 @@ class Cam():
     self.may_pumatong = False
     self.has_drawn_already = False
 
+    self.limit = 0
 
   def start(self):
     self.thread.start()
@@ -87,38 +91,44 @@ class Cam():
 
     if frame is not None and template is not None:
 
-        image1 = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # change to grayscale
-        #image2 = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
+        try:
+            image1 = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # change to grayscale
+            # image2 = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
 
-        # Create SIFT detector object
-        sift = cv2.SIFT(180)  # limit to 180 features for permLfomance
+            # Create SIFT detector object
+            sift = cv2.SIFT(180)  # limit to 180 features for permLfomance
 
-        # Obtain the keypoints and descriptors using SIFT
-        keypoints_1, descriptors_1 = sift.detectAndCompute(image1, None)
-        keypoints_2, descriptors_2 = sift.detectAndCompute(template, None)
+            # Obtain the keypoints and descriptors using SIFT
+            keypoints_1, descriptors_1 = sift.detectAndCompute(image1, None)
+            keypoints_2, descriptors_2 = sift.detectAndCompute(template, None)
 
-        #print(image1)
-        #print(template)
+            # print(image1)
+            # print(template)
 
-        # Define parameters for our Flann Matcher
-        FLANN_INDEX_KDTREE = 0
-        index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=3)
-        search_params = dict(checks=100)
+            # Define parameters for our Flann Matcher
+            FLANN_INDEX_KDTREE = 0
+            index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=3)
+            search_params = dict(checks=100)
 
-        # Create the Flann Matcher object
-        flann = cv2.FlannBasedMatcher(index_params, search_params)
+            # Create the Flann Matcher object
+            flann = cv2.FlannBasedMatcher(index_params, search_params)
 
-        # Obtain matches using K-Nearest Neighbor Method
-        # the result 'matches' is the number of similar matches found in both images
-        matches = flann.knnMatch(descriptors_1, descriptors_2, k=2)
+            # Obtain matches using K-Nearest Neighbor Method
+            # the result 'matches' is the number of similar matches found in both images
+            matches = flann.knnMatch(descriptors_1, descriptors_2, k=2)
 
-        # Store good matches using Lowe's ratio test
-        good_matches = []
-        for m, n in matches:
-            if m.distance < 0.7 * n.distance:
-                good_matches.append(m)
+            # Store good matches using Lowe's ratio test
+            good_matches = []
+            for m, n in matches:
+                if m.distance < 0.7 * n.distance:
+                    good_matches.append(m)
 
-        return len(good_matches)
+            return len(good_matches)
+        except cv2.error as erratum:
+            print erratum
+            return 0
+        except:
+            return 0
     else:
         if frame is None:
             print "Frame none"
@@ -152,9 +162,17 @@ class Cam():
 
           try:
               frame = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
+
+              #print frame
+
+              print type(frame)
+              # for item in frame:
+              #     print item
           except Exception as ex:
               frame = None
               print ex
+          except:
+              print "Error decoding frame"
 
           if frame is not None:
               height, width = frame.shape[:2]
@@ -193,64 +211,46 @@ class Cam():
               #frame = cv2.flip(frame, 1)
 
               #draw cascade over detected areas
-              # grayframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+              grayframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
               # Pass frame to our car classifier
               # cars = self.classifier.detectMultiScale(grayframe, 1.4, 2)
 
               # for (x, y, w, h) in cars:
               #     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 255), 2)
+              #print cropped
+
+              threads_created = []
 
               for (filenamae,model) in self.imagemodels:
-                   match_res = self.sift_detector(cropped,model)
+                   newthread = Thread(target=self.check_matches,args=(cropped,model,filenamae))
+                   newthread.start()
+                   threads_created.append(newthread)
 
-                   print "Match Result for " + filenamae
-                   print match_res
+                   #print len(self.matchlist)
 
-                   if match_res > 0:
-                       self.matchlist.append((filenamae,match_res))
-
-              for (fname,mdata) in self.matchlist:
-                  print fname + ":"
-                  print mdata
-
-              # If matches exceed our threshold then object has been detected
-              # if not previous_detect is None:
-              #
-              # may_pumatong = True
-              #
-              # db_info = []
-              # db_info.append(str(curr_time))
-              # db_info.append(str(curr_date))
-              # db_info.append(str('5:00'))
-              #
-              #
-              # if(sec_trigger == 0):
-              #   self.sec_count = self.sec_count + 1
-              #   cv2.putText(frame,"Sec: " + str(self.sec_count),(200,450), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,0),1)
-              #
-              #
-              #
-              # if len(db_info) == 5:
-              #    print('saving to database')
-              #    self.db_handler.insert_cow_overlap(db_info)
-              #
-              #    try:
-              #        sms_handler = SMSSender()
-              #       #sms_handler.sendSMS('9486598145', "Cow heat was detected: " + db_info[3] + "=>" + db_info[4])
-              #    except SerialException:
-              #        print("Serial port was occupied")
-              #    finally:
-              #        db_info = []
-
+              if self.limit >= 100:
+                  self.limit = 0
+                  for athread in threads_created:
+                      athread.join()
+                  del(threads_created)
               else:
-                  print(self.frame_id + ': No stacking yet')
+                  self.limit = self.limit + 1
+
+              # for (fname,mdata) in self.matchlist:
+              #     print fname + ":" #cow name
+              #     print mdata #feature count
+              #     print curr_frame_ind # sector number
+              #     print frame_count
+              #     print self.stream_name
+              # else:
+              #     print(self.frame_id + ': No stacking yet')
 
               cv2.imshow(self.frame_id, frame)
               #cv2.imwrite('temp_run_img.jpg', frame) # continuously overwrites the file
-              cv2.imshow(self.frame_id + " Current Frame",cropped)
+              #cv2.imshow(self.frame_id + " Current Frame",cropped)
 
-              if cv2.waitKey(1) ==27:
+              if cv2.waitKey(20) ==27:
                exit(0)
           else:
               print "---"
@@ -261,11 +261,26 @@ class Cam():
         print('Thread error for ' + self.frame_id)
         self.thread_cancelled = True
         cv2.destroyWindow(self.frame_id)
+      except cv2.error as error:
+          print error
+      except IOError as io:
+          print "IO ERROR"
+      except:
+          print "Evil pokemon encountered"
 
   def is_running(self):
     return self.thread.isAlive()
-      
-    
+
+  def check_matches(self,cropped,model,filenamae):
+
+    match_res = self.sift_detector(cropped,model)
+
+    print "Match Result for " + filenamae
+    print match_res
+
+    # if match_res > 0:
+    #     self.matchlist.append((filenamae,match_res))
+
   def shut_down(self):
     self.thread_cancelled = True
     #block while waiting for thread to terminate

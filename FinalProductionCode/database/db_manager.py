@@ -27,7 +27,7 @@ class MySQLHelper:
                 result = r1
 
             if result is not None:
-                return 1
+                return result[0]
             else:
                 return 0
         except Exception as ex:
@@ -36,6 +36,11 @@ class MySQLHelper:
         #print self.cursor
         #for cc in self.cursor:
            # print cc
+    def insert_tracking_data(self,sector,stream,frameno):
+
+        print sector
+        print stream
+        print frameno
 
     def closeDB(self):
         self.cnx.close()

@@ -21,3 +21,18 @@ class DBManager():
         result = self.cursor.execute("INSERT INTO tbl_cow_detected (time,date,num_sec,cow_id,stats,cow_partner_id) VALUES (%s,%s,%s,%s,%s,%s)",(data[0],data[1],data[2],data[3],"cow",data[4]))
         self.db.commit()
         print(result)
+
+    def insert_cow_position(self,sector,streamname,framecount,featurecount,cowname):
+
+        print "Logging: "
+        print sector #
+        print streamname
+        print framecount #
+        print featurecount #
+        print cowname#
+
+        result = self.cursor.execute("INSERT INTO tbl_cow_track (cow_track_sector,cow_stream,cow_frame_number,cow_feature_count,cow_name) VALUES (%s,%s,%i,%i,%s)")
+
+        self.db.commit();
+
+        print(result)

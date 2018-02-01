@@ -42,5 +42,7 @@ class MySQLHelper:
         print stream
         print frameno
 
+        query = ("INSERT INTO tbl_trac")
+
     def closeDB(self):
         self.cnx.close()

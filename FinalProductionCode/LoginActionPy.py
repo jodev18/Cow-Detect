@@ -1,9 +1,9 @@
 
 from PyQt5 import QtWidgets,QtCore,QtGui
 from FinalProductionCode.cow_ui import UILoginForm
-from FinalProductionCode.database.db_manager import MySQLHelper
+from FinalProductionCode.database.MySQLHelper import MySQLHelper
 
-from StreamActionPy import StreamForm
+from StreamForm import StreamForm
 ### THIS WILL CONTAIN THE CODE FOR HANDLING LOGIN ACTION.
 
 class LoginForm(QtWidgets.QWidget, UILoginForm.Ui_Form):

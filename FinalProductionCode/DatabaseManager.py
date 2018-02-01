@@ -36,3 +36,6 @@ class DBManager():
         self.db.commit();
 
         print(result)
+
+
+

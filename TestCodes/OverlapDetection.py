@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import time
-from FinalProductionCode.SmsManager import SMSSender
+from FinalProductionCode.SMSSender import SMSSender
 from FinalProductionCode.DatabaseManager import DBManager
 from datetime import datetime
 import urllib2

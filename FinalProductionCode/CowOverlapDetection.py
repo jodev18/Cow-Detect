@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import time
 import requests
-from SmsManager import SMSSender
+from SMSSender import SMSSender
 from DatabaseManager import DBManager
 from datetime import datetime
 import threading

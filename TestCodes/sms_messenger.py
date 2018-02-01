@@ -1,4 +1,4 @@
-from FinalProductionCode.SmsManager import SMSSender
+from FinalProductionCode.SMSSender import SMSSender
 
 sender = SMSSender()
 

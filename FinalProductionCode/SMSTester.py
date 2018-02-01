@@ -1,4 +1,4 @@
-from SmsManager import SMSSender
+from SMSSender import SMSSender
 
 
 sms = SMSSender()

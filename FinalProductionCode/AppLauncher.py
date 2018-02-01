@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 from LoginActionPy import LoginForm
 
-from StreamActionPy import StreamForm
+from StreamForm import StreamForm
 
 
 def main_func():

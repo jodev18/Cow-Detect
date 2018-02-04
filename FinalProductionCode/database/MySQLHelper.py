@@ -36,13 +36,24 @@ class MySQLHelper:
         #print self.cursor
         #for cc in self.cursor:
            # print cc
-    def insert_tracking_data(self,sector,stream,frameno):
+    def insert_tracking_data(self,sector,stream,frameno,featcount,cowname):
+
+        self.cursor = self.cnx.cursor()
 
         print sector
         print stream
         print frameno
 
-        query = ("INSERT INTO tbl_trac")
+        query = ("INSERT INTO tbl_cow_track (cow_track_sector,cow_stream,cow_frame_number,cow_feature_count,cow_name) VALUES (%s,%s,%i,%i,%s)")
+
+        try:
+            self.cursor.execute(query,(sector,stream,frameno,featcount,cowname))
+
+
+        except Exception as ex:
+            print ex
+
+    # def get_all_tracking_data(self):
 
     def closeDB(self):
         self.cnx.close()

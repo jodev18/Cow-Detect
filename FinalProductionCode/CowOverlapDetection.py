@@ -41,20 +41,20 @@ class Cam():
         for file in self.filelist:
             print "Added " + file + " to list of models."
             print "Path: " + self.modelpath + file
-            self.imagemodels.append((file,cv2.imread(self.modelpath +"/"+ file,0)))
+            self.imagemodels.append(self.modelpath +"/"+ file)
 
     # Load our image template, this is our reference image
-    self.image_template = cv2.imread('../imagemodels/rmodels/COW_A.jpg', 0)
-    self.image_template2 = cv2.imread('../imagemodels/rmodels/COW_B.jpg', 0)
-    self.image_template3 = cv2.imread('../imagemodels/rmodels/COW_C.jpg', 0)
-    self.image_template4 = cv2.imread('../imagemodels/rmodels/COW_D.jpg', 0)
-    print "image template initialized."
+    # self.image_template = cv2.imread('../imagemodels/rmodels/COW_A.jpg', 0)
+    # self.image_template2 = cv2.imread('../imagemodels/rmodels/COW_B.jpg', 0)
+    # self.image_template3 = cv2.imread('../imagemodels/rmodels/COW_C.jpg', 0)
+    # self.image_template4 = cv2.imread('../imagemodels/rmodels/COW_D.jpg', 0)
+    # print "image template initialized."
 
     # Our threshold to indicate object deteciton
     # We use 10 since the SIFT detector returns little false positves
     self.threshold = 10
 
-    self.classifier = cv2.CascadeClassifier('cascades/haarcascade_fullbody.xml');
+    # self.classifier = cv2.CascadeClassifier('cascades/haarcascade_fullbody.xml');
 
     print "Threshold value: " + str(self.threshold)
 
@@ -165,7 +165,7 @@ class Cam():
 
               #print frame
 
-              print type(frame)
+              #print type(frame)
               # for item in frame:
               #     print item
           except Exception as ex:
@@ -220,22 +220,19 @@ class Cam():
               #     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 255), 2)
               #print cropped
 
-              threads_created = []
+              # threads_created = []
+              #
+              # for filename in self.imagemodels:
+              #      imgmodel = cv2.imread(filename,0)
+              #      # newthread = Thread(target=self.check_matches,args=(cropped,imgmodel,filename))
+              #      # newthread.start()
+              #      # threads_created.append(newthread)
+              #      self.check_matches(cropped,imgmodel,filename)
 
-              for (filenamae,model) in self.imagemodels:
-                   newthread = Thread(target=self.check_matches,args=(cropped,model,filenamae))
-                   newthread.start()
-                   threads_created.append(newthread)
+              imgmodel = cv2.imread(self.imagemodels[0],0)
+              self.check_matches(cropped,imgmodel,self.imagemodels[0])
 
                    #print len(self.matchlist)
-
-              if self.limit >= 100:
-                  self.limit = 0
-                  for athread in threads_created:
-                      athread.join()
-                  del(threads_created)
-              else:
-                  self.limit = self.limit + 1
 
               # for (fname,mdata) in self.matchlist:
               #     print fname + ":" #cow name
@@ -249,13 +246,23 @@ class Cam():
               cv2.imshow(self.frame_id, frame)
               #cv2.imwrite('temp_run_img.jpg', frame) # continuously overwrites the file
               #cv2.imshow(self.frame_id + " Current Frame",cropped)
+              # if self.limit >= 2:
+              #     self.limit = 0
+              #     for athread in threads_created:
+              #         athread.join()
+              #         del(athread)
+              #     del threads_created[:]
+              # else:
+              #     self.limit = self.limit + 1
 
-              if cv2.waitKey(20) ==27:
+              if cv2.waitKey(100) ==27:
                exit(0)
           else:
               print "---"
         else:
             print "---"
+
+
 
       except ThreadError:
         print('Thread error for ' + self.frame_id)
@@ -268,6 +275,8 @@ class Cam():
       except:
           print "Evil pokemon encountered"
 
+    print "dead_thread"
+    exit(0)
   def is_running(self):
     return self.thread.isAlive()
 
@@ -350,4 +359,7 @@ class Cam():
   #cam3.start()
   #url4 = 'http://127.0.0.1:8888/mjpg/002'
   #cam4 = Cam(url2, 'CAMERA 2')
-  #cam4.start()
+  #cam4.start()'
+url4 = 'http://127.0.0.1:8888/mjpg/004'
+cam4 = Cam(url4, 'CAMERA 2')
+cam4.start()

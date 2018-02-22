@@ -5,7 +5,7 @@ class MovementAnalyzer():
 
 
     def __init__(self):
-        self.database
+        self.database =
 
 
 
